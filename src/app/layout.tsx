@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Plus_Jakarta_Sans, Cormorant_Garamond, JetBrains_Mono } from "next/font/google";
-// import { Providers } from "@/providers";
+import { Providers } from "@/providers";
 import "./globals.css";
 
 /* ============================================================
@@ -73,9 +73,9 @@ export default function RootLayout({
       className={`${jakarta.variable} ${cormorant.variable} ${jetbrains.variable}`}
     >
       <body className="min-h-screen bg-background font-sans text-foreground antialiased">
-        {/* <Providers> */}
+        <Providers>
           {children}
-        {/* </Providers> */}
+        </Providers>
       </body>
     </html>
   );
