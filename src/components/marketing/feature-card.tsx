@@ -1,8 +1,8 @@
 import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import type { Feature } from "@/lib/config/features";
+import type { MarketingFeature } from "@/lib/config/features";
 
-export function FeatureCard({ feature }: { feature: Feature }) {
+export function FeatureCard({ feature }: { feature: MarketingFeature }) {
   const Icon = feature.icon;
 
   return (
@@ -16,7 +16,7 @@ export function FeatureCard({ feature }: { feature: Feature }) {
         </span>
         <h2 className="dashboard-panel-title mt-4">{feature.title}</h2>
         <p className="mt-2 text-sm leading-6 text-muted-foreground">
-          {feature.summary}
+          {feature.shortDescription}
         </p>
         <span className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-primary">
           Learn more

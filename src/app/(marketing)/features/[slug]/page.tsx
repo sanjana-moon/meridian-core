@@ -1,23 +1,25 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { FeatureCard } from "@/components/marketing/feature-card";
-import { MarketingHero } from "@/components/marketing/hero";
 import { SectionHeading } from "@/components/marketing/section-heading";
-// import { features } from "@/lib/config/features";
+import {
+  getFeatureBySlug,
+  marketingFeatures,
+} from "@/lib/config/features";
 
 type FeaturePageProps = {
   params: Promise<{ slug: string }>;
 };
 
 export function generateStaticParams() {
-  return features.map(({ slug }) => ({ slug }));
+  return marketingFeatures.map(({ slug }) => ({ slug }));
 }
 
 export async function generateMetadata({
   params,
 }: FeaturePageProps): Promise<Metadata> {
   const { slug } = await params;
-  const feature = features.find((item) => item.slug === slug);
+  const feature = getFeatureBySlug(slug);
 
   if (!feature) {
     return {};
@@ -25,38 +27,52 @@ export async function generateMetadata({
 
   return {
     title: feature.title,
-    description: feature.summary,
+    description: feature.shortDescription,
   };
 }
 
 export default async function FeaturePage({ params }: FeaturePageProps) {
   const { slug } = await params;
-  const feature = features.find((item) => item.slug === slug);
+  const feature = getFeatureBySlug(slug);
 
   if (!feature) {
     notFound();
   }
 
-  const relatedFeatures = features
+  const relatedFeatures = marketingFeatures
     .filter((item) => item.slug !== feature.slug)
     .slice(0, 3);
+  const Icon = feature.icon;
 
   return (
     <div className="dashboard-content">
-      <MarketingHero
-        actionHref="/register"
-        actionLabel="Get started"
-        description={feature.description}
-        eyebrow="Meridian Core features"
-        icon={feature.icon}
-        title={feature.title}
-      />
+      <section className="dashboard-panel gradient-premium overflow-hidden">
+        <div className="dashboard-panel-body grid gap-8 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-center sm:p-8">
+          <div>
+            <span className="dashboard-badge badge-success">
+              Meridian Core feature
+            </span>
+            <h1 className="mt-5 text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+              {feature.title}
+            </h1>
+            <p className="mt-4 max-w-2xl text-sm leading-7 text-white/80 sm:text-base">
+              {feature.longDescription}
+            </p>
+            <a className="dashboard-button mt-6" href="/register">
+              Get started
+            </a>
+          </div>
+          <span className="dashboard-brand-mark hidden size-20 sm:flex">
+            <Icon aria-hidden="true" size={34} />
+          </span>
+        </div>
+      </section>
 
       <section aria-label="Feature details">
         <SectionHeading
-          description={feature.details}
+          description={feature.shortDescription}
           eyebrow="Designed for clarity"
-          title="Built around the way you bank"
+          title="What's included"
         />
         <ul className="dashboard-metrics mt-6">
           {feature.highlights.map((highlight) => (
