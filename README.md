@@ -9,12 +9,19 @@ meridian-core/
 │   │
 │   ├── app/                                  # NEXT.JS APP ROUTER
 │   │   │
+│   │   ├── (marketing)/                      # PUBLIC MARKETING
+│   │   │   ├── layout.tsx                    # navbar + footer shell
+│   │   │   ├── page.tsx                      # HOME — hero + features
+│   │   │   └── features/
+│   │   │       └── [slug]/page.tsx           # dynamic feature detail
+│   │   │
 │   │   ├── (auth)/
 │   │   │   ├── login/page.tsx
 │   │   │   ├── register/page.tsx
 │   │   │   └── two-factor/page.tsx
 │   │   │
 │   │   ├── (dashboard)/
+│   │   │   ├── layout.tsx                    # dashboard shell (sidebar)
 │   │   │   ├── admin/
 │   │   │   │   ├── dashboard/page.tsx
 │   │   │   │   ├── customers/page.tsx
@@ -54,22 +61,20 @@ meridian-core/
 │   │   │   │       ├── route.ts
 │   │   │   │       ├── approve/route.ts
 │   │   │   │       └── reject/route.ts
-│   │   │   ├── admin/
-│   │   │   │   └── settings/route.ts
+│   │   │   ├── admin/settings/route.ts
 │   │   │   ├── notifications/
 │   │   │   │   ├── route.ts
 │   │   │   │   └── [notificationId]/route.ts
 │   │   │   └── two-factor/
+│   │   │       ├── status/route.ts
 │   │   │       ├── setup/route.ts
 │   │   │       ├── verify/route.ts
 │   │   │       └── disable/route.ts
 │   │   │
-│   │   ├── layout.tsx
-│   │   ├── page.tsx
+│   │   ├── layout.tsx                        # ROOT — fonts + providers
 │   │   └── globals.css
 │   │
 │   ├── server/                               # BACKEND (SERVER-ONLY)
-│   │   │
 │   │   ├── auth/
 │   │   │   └── auth.config.ts
 │   │   │
@@ -130,7 +135,7 @@ meridian-core/
 │   │       ├── api-response.ts
 │   │       └── logger.ts
 │   │
-│   ├── lib/                                  # CLIENT-SAFE SHARED CODE
+│   ├── lib/                                  # CLIENT-SAFE SHARED
 │   │   ├── validations/
 │   │   │   ├── auth.schema.ts
 │   │   │   ├── account.schema.ts
@@ -144,14 +149,21 @@ meridian-core/
 │   │   │   ├── loan-status.ts
 │   │   │   └── index.ts
 │   │   ├── config/
-│   │   │   └── site.ts
+│   │   │   ├── site.ts
+│   │   │   └── features.ts                   # marketing feature list
 │   │   └── utils.ts
 │   │
 │   ├── components/                           # VIEW
-│   │   ├── ui/
-│   │   ├── shared/
-│   │   ├── layout/
-│   │   ├── charts/
+│   │   ├── ui/                               # shadcn primitives
+│   │   ├── shared/                           # StatCard, StatusBadge, DataTable
+│   │   ├── layout/                           # Sidebar, Header, MobileNav
+│   │   ├── marketing/                        # navbar, footer, hero, cards
+│   │   │   ├── navbar.tsx
+│   │   │   ├── footer.tsx
+│   │   │   ├── hero.tsx
+│   │   │   ├── feature-card.tsx
+│   │   │   └── section-heading.tsx
+│   │   ├── charts/                           # Recharts wrappers
 │   │   ├── admin/
 │   │   ├── staff/
 │   │   └── customer/
@@ -178,13 +190,14 @@ meridian-core/
 │   │   │   ├── accounts.api.ts
 │   │   │   ├── transactions.api.ts
 │   │   │   ├── loans.api.ts
+│   │   │   ├── two-factor.api.ts
 │   │   │   └── settings.api.ts
 │   │   └── slices/
 │   │       ├── ui.slice.ts
 │   │       └── auth.slice.ts
 │   │
 │   ├── providers/
-│   │   └── index.tsx
+│   │   └── index.tsx                         # Theme + Redux + Session
 │   │
 │   ├── hooks/
 │   │   ├── use-current-user.ts
@@ -196,7 +209,7 @@ meridian-core/
 │   │   └── index.ts
 │   │
 │   ├── auth.ts                               # AUTH.JS V5 ENTRY POINT
-│   └── proxy.ts                              # NEXT.JS 16 PROXY (was middleware.ts)
+│   └── proxy.ts                              # NEXT.JS 16 PROXY
 │
 ├── .env.local
 ├── .env.example
