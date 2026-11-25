@@ -4,10 +4,13 @@ import { getPool } from "@/server/database/connection";
 import { decryptSecret } from "@/server/security/encryption";
 import { ApiError } from "@/server/utils/api-response";
 
+const ISSUER = "Meridian Core";
+
 export async function createTotpSetup(email: string) {
+  // otplib v13: generateSecret() returns a base32 string by default.
   const secret = generateSecret();
   const uri = generateURI({
-    issuer: "Meridian Core",
+    issuer: ISSUER,
     label: email,
     secret,
   });
@@ -15,11 +18,12 @@ export async function createTotpSetup(email: string) {
   return { secret, qrCode };
 }
 
-export async function verifyTotp(secret: string, token: string) {
+export async function verifyTotp(secret: string, token: string): Promise<boolean> {
+  if (!/^\d{6}$/.test(token)) return false;
   const result = await verify({
     secret,
     token,
-    epochTolerance: 30,
+    epochTolerance: 1, // one 30-s window before/after
   });
   return result.valid;
 }
@@ -40,7 +44,11 @@ export async function assertTwoFactorIfEnabled(
   if (!setup?.enabled) {
     return;
   }
-  if (!token || !(await verifyTotp(decryptSecret(setup.secret_ciphertext), token))) {
-    throw new ApiError("A valid two-factor code is required", 403);
+  if (!token) {
+    throw new ApiError("Two-factor code required", 403);
+  }
+  const valid = await verifyTotp(decryptSecret(setup.secret_ciphertext), token);
+  if (!valid) {
+    throw new ApiError("Invalid two-factor code", 403);
   }
 }

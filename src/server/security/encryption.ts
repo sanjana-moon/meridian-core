@@ -6,12 +6,15 @@ import {
 } from "node:crypto";
 import { ApiError } from "@/server/utils/api-response";
 
+const ENCRYPTION_KEY_MIN_LENGTH = 32;
+
 function encryptionKey(): Buffer {
-  const masterKey =
-    process.env.TOTP_ENCRYPTION_KEY ?? process.env.AUTH_SECRET;
-  if (!masterKey || masterKey.length < 32) {
+  // Dedicated key required. Do NOT fall back to AUTH_SECRET because rotating
+  // AUTH_SECRET would permanently break decryption of stored 2FA secrets.
+  const masterKey = process.env.TOTP_ENCRYPTION_KEY;
+  if (!masterKey || masterKey.length < ENCRYPTION_KEY_MIN_LENGTH) {
     throw new ApiError(
-      "Configure a 32-character TOTP_ENCRYPTION_KEY or AUTH_SECRET",
+      "TOTP_ENCRYPTION_KEY must be at least 32 characters. Generate with: openssl rand -hex 32",
       503,
     );
   }
