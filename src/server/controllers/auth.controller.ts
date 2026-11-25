@@ -1,1 +1,1 @@
-export { requireUser } from "@/server/guards/auth.guard";
+export { requireUser } from "@/server/services/auth.service";
