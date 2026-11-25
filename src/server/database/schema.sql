@@ -102,3 +102,42 @@ CREATE TABLE IF NOT EXISTS recovery_codes (
   used_at timestamptz,
   created_at timestamptz NOT NULL DEFAULT now()
 );
+
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+  NEW.updated_at = now();
+  RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+DROP TRIGGER IF EXISTS users_set_updated_at ON users;
+CREATE TRIGGER users_set_updated_at
+  BEFORE UPDATE ON users
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+DROP TRIGGER IF EXISTS accounts_set_updated_at ON accounts;
+CREATE TRIGGER accounts_set_updated_at
+  BEFORE UPDATE ON accounts
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+DROP TRIGGER IF EXISTS loans_set_updated_at ON loans;
+CREATE TRIGGER loans_set_updated_at
+  BEFORE UPDATE ON loans
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+DROP TRIGGER IF EXISTS transactions_set_updated_at ON transactions;
+CREATE TRIGGER transactions_set_updated_at
+  BEFORE UPDATE ON transactions
+  FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+CREATE UNIQUE INDEX IF NOT EXISTS users_email_lower_unique
+  ON users (lower(email));
+
+ALTER TABLE transactions
+  ADD COLUMN IF NOT EXISTS sender_balance_after   numeric(20, 2),
+  ADD COLUMN IF NOT EXISTS receiver_balance_after numeric(20, 2);
+
+ALTER TABLE loans
+  ADD COLUMN IF NOT EXISTS forwarded_by uuid REFERENCES users(id),
+  ADD COLUMN IF NOT EXISTS forwarded_at timestamptz;
